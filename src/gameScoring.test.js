@@ -1,6 +1,6 @@
 import { computeNextGameState } from "./gameScoring";
 
-describe("User story 1", () => {
+describe("GameScoring", () => {
   describe("Next gameState computation", () => {
     it("should compute basic next score", () => {
       expect(computeNextGameState({ scores: [0, 0] }, 0)).toEqual({
@@ -17,8 +17,20 @@ describe("User story 1", () => {
         winner: 0
       });
       expect(computeNextGameState({ scores: [40, 40] }, 0)).toEqual({
+        scores: ["ADVANTAGE", 40]
+      });
+      expect(computeNextGameState({ scores: ["ADVANTAGE", 40] }, 0)).toEqual({
         scores: ["Win game", 40],
         winner: 0
+      });
+      expect(computeNextGameState({ scores: [40, "ADVANTAGE"] }, 1)).toEqual({
+        scores: [40, "Win game"],
+        winner: 1
+      });
+    });
+    it("should handle the DEUCE rule gracefully", () => {
+      expect(computeNextGameState({ scores: [40, "ADVANTAGE"] }, 0)).toEqual({
+        scores: [40, 40]
       });
     });
     it("should treat both players equally", () => {
@@ -79,6 +91,13 @@ describe("User story 1", () => {
       );
       expect(() =>
         computeNextGameState({ scores: ["Win game", 15] })
+      ).toThrowError(errorMessage);
+    });
+    it("should check DEUCE invariants", () => {
+      const errorMessage =
+        "A player can be in advantage only when the other has a score of 40";
+      expect(() =>
+        computeNextGameState({ scores: ["ADVANTAGE", 15] })
       ).toThrowError(errorMessage);
     });
     it("should throw an exception when neither player 0 nor player 1 scored a point", () => {
