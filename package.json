@@ -1,0 +1,22 @@
+{
+  "name": "kata-tennis-scoring-system",
+  "version": "1.0.0",
+  "description":
+    "This Kata is about implementing a simple tennis scoring system.",
+  "main": "src/index.js",
+  "private": true,
+  "scripts": {
+    "test": "jest --coverage",
+    "test-watch": "jest --watch"
+  },
+  "jest": {
+    "rootDir": "src"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-jest": "^22.0.4",
+    "babel-preset-es2015": "^6.24.1",
+    "jest": "^22.0.4",
+    "regenerator-runtime": "^0.11.1"
+  }
+}
