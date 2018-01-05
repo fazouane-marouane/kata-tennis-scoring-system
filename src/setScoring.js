@@ -48,7 +48,6 @@ function computeWinner(scores) {
 
 function flipSetState(setState) {
   return {
-    ...setState,
     gameState: flipGameState(setState.gameState),
     scores: flipScores(setState.scores),
     winner: setState.winner !== undefined ? 1 - setState.winner : undefined
@@ -65,9 +64,7 @@ export function computeNextSetState(setState, playerWhoScored) {
     playerWhoScored
   );
   const nextSetState = computeNextScores(setState.scores, nextGameState);
+  nextSetState.winner = computeWinner(nextSetState.scores);
 
-  return {
-    ...nextSetState,
-    winner: computeWinner(nextSetState.scores)
-  };
+  return nextSetState;
 }

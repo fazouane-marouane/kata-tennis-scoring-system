@@ -44,7 +44,6 @@ export function flipScores([s0, s1]) {
 }
 export function flipGameState(gameState) {
   return {
-    ...gameState,
     scores: flipScores(gameState.scores),
     winner: gameState.winner !== undefined ? 1 - gameState.winner : undefined
   };
@@ -62,7 +61,6 @@ export function computeNextGameState(gameState, playerWhoScored) {
   const nextScores = computeNextScores(gameState.scores);
 
   return {
-    ...gameState,
     scores: nextScores,
     winner: nextScores[0] === "Win game" ? 0 : undefined
   };
