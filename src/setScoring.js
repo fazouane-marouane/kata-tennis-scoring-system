@@ -1,6 +1,9 @@
 import { assert } from "./assert";
 import { computeNextGameState, flipGameState, flipScores } from "./gameScoring";
 
+/**
+ * Enforces the set state's invariants
+ */
 function validateSetState(setState) {
   assert(
     setState && setState.scores && setState.scores.length === 2,
@@ -23,6 +26,13 @@ function validateSetState(setState) {
   );
 }
 
+/**
+ * It returns the next scores provided that the player 0 scored a point.
+ * When the player wins the set, the next game state will be reset.
+ *
+ * @param {*} scores the current set's scores for both players
+ * @param {*} nextGameState the temporary next game state
+ */
 function computeNextScores(scores, nextGameState) {
   const { winner } = nextGameState;
   if (winner === 0) {
@@ -39,13 +49,11 @@ function computeNextScores(scores, nextGameState) {
   };
 }
 
-function computeWinner(scores) {
-  if (scores[0] >= 6 && Math.abs(scores[1] - scores[0]) >= 2) {
-    return 0;
-  }
-  return undefined;
-}
-
+/**
+ * Utility function to exchanges the players roles.
+ * The player 0's set state becomes player 1's, and vice versa.
+ * @argument {*} setState
+ */
 function flipSetState(setState) {
   return {
     gameState: flipGameState(setState.gameState),
@@ -57,14 +65,23 @@ function flipSetState(setState) {
 export function computeNextSetState(setState, playerWhoScored) {
   validateSetState(setState);
   if (playerWhoScored === 1) {
+    // Since the rules apply indifferently to both players,
+    // we can flip the set state in the input and the output to simplify the implementation.
     return flipSetState(computeNextSetState(flipSetState(setState), 0));
   }
   const nextGameState = computeNextGameState(
     setState.gameState,
     playerWhoScored
   );
+  // We know now that playerWhoScored can only be 0
   const nextSetState = computeNextScores(setState.scores, nextGameState);
-  nextSetState.winner = computeWinner(nextSetState.scores);
+  // Check the Tie-Break rule
+  if (
+    nextSetState.scores[0] >= 6 &&
+    Math.abs(nextSetState.scores[1] - nextSetState.scores[0]) >= 2
+  ) {
+    nextSetState.winner = 0;
+  }
 
   return nextSetState;
 }
