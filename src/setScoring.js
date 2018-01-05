@@ -1,8 +1,6 @@
 import { assert } from "./assert";
 import { computeNextGameState, flipGameState, flipScores } from "./gameScoring";
 
-const validScores = [0, 1, 2, 3, 4, 5, 6];
-
 function validateSetState(setState) {
   assert(
     setState && setState.scores && setState.scores.length === 2,
@@ -14,13 +12,13 @@ function validateSetState(setState) {
   );
   setState.scores.forEach(score =>
     assert(
-      validScores.includes(score),
-      `the only valid set scores are ${validScores}`
+      Number.isInteger(score) && score >= 0,
+      `A score should be a positive integer`
     )
   );
   assert(
-    !(setState.scores[0] >= 6 && setState.scores[1] <= 4) &&
-      !(setState.scores[1] >= 6 && setState.scores[0] <= 4),
+    !(setState.scores[0] >= 6 || setState.scores[1] >= 6) ||
+      Math.abs(setState.scores[1] - setState.scores[0]) < 2,
     `Wrong scores. A player should have won the set.`
   );
 }
@@ -42,7 +40,7 @@ function computeNextScores(scores, nextGameState) {
 }
 
 function computeWinner(scores) {
-  if ((scores[0] === 6 && scores[1] <= 4) || scores[0] === 7) {
+  if (scores[0] >= 6 && Math.abs(scores[1] - scores[0]) >= 2) {
     return 0;
   }
   return undefined;
